@@ -1,50 +1,64 @@
 {
-  "name": "gatsby-starter-netlify-cms",
-  "description": "Example Gatsby, and Netlify CMS project",
-  "version": "1.1.3",
-  "author": "Austin Green",
-  "dependencies": {
-    "bulma": "^0.8.0",
-    "gatsby": "^2.13.31",
-    "gatsby-image": "^2.0.23",
-    "gatsby-plugin-netlify": "^2.0.6",
-    "gatsby-plugin-netlify-cms": "^4.1.6",
-    "gatsby-plugin-purgecss": "^4.0.0",
-    "gatsby-plugin-react-helmet": "^3.0.4",
-    "gatsby-plugin-sass": "^2.0.7",
-    "gatsby-plugin-sharp": "^2.2.9",
-    "gatsby-remark-copy-linked-files": "^2.0.7",
-    "gatsby-remark-images": "^3.1.6",
-    "gatsby-remark-relative-images": "^0.2.1",
-    "gatsby-source-filesystem": "^2.0.26",
-    "gatsby-transformer-remark": "^2.6.9",
-    "gatsby-transformer-sharp": "^2.1.9",
-    "lodash": "^4.17.15",
-    "lodash-webpack-plugin": "^0.11.4",
-    "netlify-cms-app": "^2.9.6",
-    "netlify-cms-media-library-cloudinary": "^1.3.2",
-    "netlify-cms-media-library-uploadcare": "^0.5.2",
-    "node-sass": "^4.11.0",
-    "prop-types": "^15.6.0",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
-    "react-helmet": "^5.2.0",
-    "uuid": "^3.2.1"
-  },
-  "keywords": [
-    "gatsby"
-  ],
-  "license": "MIT",
-  "main": "n/a",
-  "scripts": {
-    "clean": "gatsby clean",
-    "start": "npm run develop",
-    "build": "npm run clean && gatsby build",
-    "develop": "npm run clean && gatsby develop",
-    "format": "prettier --trailing-comma es5 --no-semi --single-quote --write \"{gatsby-*.js,src/**/*.js}\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "devDependencies": {
-    "prettier": "^1.15.3"
-  }
+	"name": "react-next-landing",
+	"description": "Modern Multipurpose Landing Pages Template Using React, Next, Styled Components and so on. It also support Gatsby Static site generator ",
+	"version": "3.0.0",
+	"private": true,
+	"author": "RedQ Team",
+	"license": "",
+	"repository": {
+		"type": "git",
+		"url": ""
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.4.4",
+		"cpx": "^1.5.0",
+		"cross-env": "^5.2.0",
+		"firebase-tools": "^6.7.1",
+		"husky": "^2.1.0",
+		"lerna": "^3.13.4",
+		"lint-staged": "^8.1.5",
+		"prettier": "^1.17.0",
+		"rimraf": "^2.6.3"
+	},
+	"workspaces": [
+		"packages/common",
+		"packages/landing",
+		"packages/landing-gatsby",
+		"packages/reusecore"
+	],
+	"scripts": {
+		"clean": "lerna clean --yes && rimraf node_modules",
+		"gatsby-dev": "yarn workspace gatsby-landing run dev",
+		"gatsby-build": "yarn workspace gatsby-landing run build",
+		"gatsby-serve": "yarn workspace gatsby-landing run serve",
+		"start": "lerna run --parallel dev",
+		"web": "yarn workspace next-landing run dev",
+		"landing-build": "rimraf dist && yarn workspace next-landing run build",
+		"landing-start": "yarn workspace next-landing run start",
+		"prebuild-public": "rimraf \"dist/functions/**\" && rimraf \"dist/public\"",
+		"prefirebase-serve": "yarn run build-public && yarn run build-funcs && yarn workspace next-landing run build && yarn run copy-deps && yarn run install-deps",
+		"firebase-serve": "cross-env NODE_ENV=production firebase serve",
+		"prefirebase-deploy": "yarn run build-public && yarn run build-funcs && yarn workspace next-landing run build && yarn run copy-deps",
+		"firebase-deploy": "firebase deploy",
+		"build-public": "cpx \"packages/common/src/assets/**/*.*\" \"dist/public/static\" -C && cpx \"public/**/*.*\" \"dist/public\" -C",
+		"build-funcs": "babel \"packages/functions\" --out-dir \"dist/functions\"",
+		"copy-deps": "cpx \"packages/landing/*{package.json,package-lock.json,yarn.lock}\" \"dist/functions\" -C",
+		"install-deps": "cd \"dist/functions\" && yarn",
+		"pregatsby-firebase-serve": "rimraf dist && yarn run gatsby-build && cpx \"packages/landing-gatsby/public/**/*.*\" \"dist/public\" -C",
+		"gatsby-firebase-serve": "cross-env NODE_ENV=production firebase serve",
+		"pregatsby-firebase-deploy": "rimraf dist && yarn run gatsby-build && cpx \"packages/landing-gatsby/public/**/*.*\" \"dist/public\" -C",
+		"gatsby-firebase-deploy": "firebase deploy",
+		"netlify-deploy": "yarn workspace next-landing run netlify-build"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,md,css}": [
+			"prettier --trailing-comma es5 --single-quote --write",
+			"git add"
+		]
+	}
 }
